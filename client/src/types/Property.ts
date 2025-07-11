@@ -1,27 +1,27 @@
 export interface Property {
-  id: string;
+  id: number;
   title: string;
-  price: number;
   location: string;
   city: string;
-  state: string;
-  type: 'apartment' | 'house' | 'villa' | 'plot';
+  price: number;
+  type: 'apartment' | 'house' | 'villa' | 'studio';
   bedrooms: number;
   bathrooms: number;
   area: number;
   image: string;
-  amenities: string[];
   description: string;
-  isNew: boolean;
-  isFeatured: boolean;
+  amenities: string[];
+  yearBuilt: number;
+  parking: boolean;
+  furnished: boolean;
 }
 
-export interface SearchFilters {
+export interface FilterState {
   city: string;
   type: string;
-  minPrice: number;
-  maxPrice: number;
+  minPrice: string;
+  maxPrice: string;
   bedrooms: string;
-  minArea: number;
-  maxArea: number;
+  minArea: string;
+  maxArea: string;
 }
