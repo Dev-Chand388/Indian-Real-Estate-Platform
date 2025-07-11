@@ -10,6 +10,17 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'Real Estate API Server', 
+    version: '1.0.0',
+    endpoints: {
+      health: '/api/health',
+      properties: '/api/properties'
+    }
+  });
+});
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running' });
 });
