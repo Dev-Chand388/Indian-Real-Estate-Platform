@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Filter, Heart, Home, BarChart3, MapPin, Bed, Bath, Square } from 'lucide-react';
+import { Search, Filter, Heart, Home, BarChart3, MapPin, Bed, Bath, Square, BarChart, Calculator } from 'lucide-react';
 import { Property, FilterState } from './types/Property';
 import { mockProperties } from './utils/mockData';
 import PropertyCard from './components/PropertyCard';
@@ -7,6 +7,9 @@ import PropertyModal from './components/PropertyModal';
 import FilterPanel from './components/FilterPanel';
 import Navigation from './components/Navigation';
 import Dashboard from './components/Dashboard';
+import PropertyComparison from './components/PropertyComparison';
+import MortgageCalculator from './components/MortgageCalculator';
+import VirtualTour from './components/VirtualTour';
 
 type View = 'home' | 'favorites' | 'dashboard';
 
@@ -16,6 +19,10 @@ function App() {
   const [showFilters, setShowFilters] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [favorites, setFavorites] = useState<Set<number>>(new Set());
+  const [compareProperties, setCompareProperties] = useState<Property[]>([]);
+  const [showComparison, setShowComparison] = useState(false);
+  const [showMortgageCalculator, setShowMortgageCalculator] = useState(false);
+  const [showVirtualTour, setShowVirtualTour] = useState(false);
   const [filters, setFilters] = useState<FilterState>({
     city: '',
     type: '',
@@ -23,7 +30,10 @@ function App() {
     maxPrice: '',
     bedrooms: '',
     minArea: '',
-    maxArea: ''
+    maxArea: '',
+    furnished: '',
+    parking: '',
+    rating: ''
   });
 
   const filteredProperties = useMemo(() => {
@@ -69,6 +79,18 @@ function App() {
       filtered = filtered.filter(property => property.area <= parseInt(filters.maxArea));
     }
 
+    if (filters.furnished) {
+      filtered = filtered.filter(property => property.furnished === (filters.furnished === 'true'));
+    }
+
+    if (filters.parking) {
+      filtered = filtered.filter(property => property.parking === (filters.parking === 'true'));
+    }
+
+    if (filters.rating) {
+      filtered = filtered.filter(property => property.rating >= parseFloat(filters.rating));
+    }
+
     return filtered;
   }, [searchTerm, filters]);
 
@@ -88,6 +110,18 @@ function App() {
     });
   };
 
+  const handleCompareProperty = (property: Property) => {
+    if (compareProperties.find(p => p.id === property.id)) {
+      setCompareProperties(compareProperties.filter(p => p.id !== property.id));
+    } else if (compareProperties.length < 3) {
+      setCompareProperties([...compareProperties, property]);
+    }
+  };
+
+  const removeFromComparison = (propertyId: number) => {
+    setCompareProperties(compareProperties.filter(p => p.id !== propertyId));
+  };
+
   const clearFilters = () => {
     setFilters({
       city: '',
@@ -96,7 +130,10 @@ function App() {
       maxPrice: '',
       bedrooms: '',
       minArea: '',
-      maxArea: ''
+      maxArea: '',
+      furnished: '',
+      parking: '',
+      rating: ''
     });
     setSearchTerm('');
   };
@@ -198,6 +235,15 @@ function App() {
                   Clear all filters
                 </button>
               )}
+              {compareProperties.length > 0 && (
+                <button
+                  onClick={() => setShowComparison(true)}
+                  className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  <BarChart className="w-4 h-4" />
+                  <span>Compare ({compareProperties.length})</span>
+                </button>
+              )}
             </div>
 
             {/* Property Grid */}
@@ -209,6 +255,8 @@ function App() {
                   isFavorite={favorites.has(property.id)}
                   onToggleFavorite={toggleFavorite}
                   onViewDetails={setSelectedProperty}
+                  onCompare={handleCompareProperty}
+                  showCompareButton={true}
                 />
               ))}
             </div>
@@ -239,6 +287,33 @@ function App() {
           isFavorite={favorites.has(selectedProperty.id)}
           onToggleFavorite={toggleFavorite}
           onClose={() => setSelectedProperty(null)}
+          onVirtualTour={() => setShowVirtualTour(true)}
+          onMortgageCalculator={() => setShowMortgageCalculator(true)}
+        />
+      )}
+
+      {showComparison && (
+        <PropertyComparison
+          properties={compareProperties}
+          onClose={() => setShowComparison(false)}
+          onRemoveProperty={removeFromComparison}
+        />
+      )}
+
+      {showMortgageCalculator && (
+        <MortgageCalculator
+          isOpen={showMortgageCalculator}
+          onClose={() => setShowMortgageCalculator(false)}
+          propertyPrice={selectedProperty?.price}
+        />
+      )}
+
+      {showVirtualTour && selectedProperty && (
+        <VirtualTour
+          isOpen={showVirtualTour}
+          onClose={() => setShowVirtualTour(false)}
+          propertyTitle={selectedProperty.title}
+          tourUrl={selectedProperty.virtualTour}
         />
       )}
     </div>

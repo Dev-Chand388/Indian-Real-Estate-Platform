@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, MapPin, Bed, Bath, Square, Eye } from 'lucide-react';
+import { Heart, MapPin, Bed, Bath, Square, Eye, Star, Camera, BarChart3 } from 'lucide-react';
 import { Property } from '../types/Property';
 
 interface PropertyCardProps {
@@ -7,13 +7,17 @@ interface PropertyCardProps {
   isFavorite: boolean;
   onToggleFavorite: (id: number) => void;
   onViewDetails: (property: Property) => void;
+  onCompare?: (property: Property) => void;
+  showCompareButton?: boolean;
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({
   property,
   isFavorite,
   onToggleFavorite,
-  onViewDetails
+  onViewDetails,
+  onCompare,
+  showCompareButton = false
 }) => {
   const formatPrice = (price: number) => {
     if (price >= 10000000) {
@@ -45,6 +49,11 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         <div className="absolute top-3 left-3 bg-blue-600 text-white px-2 py-1 rounded text-sm font-medium capitalize">
           {property.type}
         </div>
+        {property.virtualTour && (
+          <div className="absolute bottom-3 right-3 bg-green-600 text-white p-2 rounded-full">
+            <Camera className="w-4 h-4" />
+          </div>
+        )}
       </div>
       
       <div className="p-4">
@@ -57,9 +66,14 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           <span className="text-sm">{property.location}</span>
         </div>
         
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-2">
           <div className="text-2xl font-bold text-blue-600">
             {formatPrice(property.price)}
+          </div>
+          <div className="flex items-center space-x-1">
+            <Star className="w-4 h-4 text-yellow-400 fill-current" />
+            <span className="text-sm font-medium text-gray-700">{property.rating}</span>
+            <span className="text-sm text-gray-500">({property.reviews})</span>
           </div>
         </div>
         
@@ -78,13 +92,25 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           </div>
         </div>
         
-        <button
-          onClick={() => onViewDetails(property)}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
-        >
-          <Eye className="w-4 h-4" />
-          <span>View Details</span>
-        </button>
+        <div className="space-y-2">
+          <button
+            onClick={() => onViewDetails(property)}
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
+          >
+            <Eye className="w-4 h-4" />
+            <span>View Details</span>
+          </button>
+          
+          {showCompareButton && onCompare && (
+            <button
+              onClick={() => onCompare(property)}
+              className="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2"
+            >
+              <BarChart3 className="w-4 h-4" />
+              <span>Compare</span>
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

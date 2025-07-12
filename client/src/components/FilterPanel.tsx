@@ -107,6 +107,46 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
           />
         </div>
         
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Furnished</label>
+          <select
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            value={filters.furnished}
+            onChange={(e) => handleFilterChange('furnished', e.target.value)}
+          >
+            <option value="">Any</option>
+            <option value="true">Furnished</option>
+            <option value="false">Unfurnished</option>
+          </select>
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Parking</label>
+          <select
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            value={filters.parking}
+            onChange={(e) => handleFilterChange('parking', e.target.value)}
+          >
+            <option value="">Any</option>
+            <option value="true">Available</option>
+            <option value="false">Not Available</option>
+          </select>
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Min Rating</label>
+          <select
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            value={filters.rating}
+            onChange={(e) => handleFilterChange('rating', e.target.value)}
+          >
+            <option value="">Any Rating</option>
+            <option value="4">4+ Stars</option>
+            <option value="4.5">4.5+ Stars</option>
+            <option value="4.8">4.8+ Stars</option>
+          </select>
+        </div>
+        
         <div className="flex items-end">
           <button
             onClick={onClearFilters}
